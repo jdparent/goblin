@@ -1,0 +1,17 @@
+.TH PWD 1
+.SH NAME
+pwd, pbd \- working directory
+.SH SYNOPSIS
+.B pwd
+.br
+.B pbd
+.SH DESCRIPTION
+Pwd prints the path name of the working (current) directory.
+Pwd is guaranteed to return the same path that was used to enter the directory.
+If, however, the name space has changed, or directory names have been changed,
+this path name may no longer be valid.
+.PP
+Pbd prints the base name of the working (current) directory. It prints
+no final newline and is intended for applicaitons such as constructing shell
+prompts.
+
