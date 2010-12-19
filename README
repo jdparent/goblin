@@ -1,3 +1,52 @@
 goblin: Go implementation of the 9base/Plan 9 command line tools.
 
-This project is an idea presented at suckless.org/project_ideas.
+This project is an idea presented at suckless.org/project_ideas.  Per their
+project requirements the following tools will be covered in this project:
+
+ascii - interpret ASCII characters
+basename - strip file name affixes
+bc - arbitrary-precision arithmetic language
+cal - print calendar
+cat - catenate files
+cleanname - clean a path name
+cmp - compare two files
+date - date and time
+dc - desk calculator
+du - disk usage
+dd - convert and copy a file
+diff - differential file comparator
+echo - print arguments
+ed - text editor
+factor - factor a number
+fortune - sample lines from a file
+fmt - simple text formatters
+freq - print histogram of character frequencies
+getflags - command-line parsing for shell scritps
+grep - search a file for a pattern
+hoc - interactive floating point language
+join - relational database operator
+look - find lines in a sorted list
+ls - list contents of directory
+mk - maintain (make) related files
+mkdir - make a directory
+mtime - print file modification time
+pbd - working directory
+primes - generate large primes
+read - catenate files
+sam - screen editor with structural regular expressions
+sha1sum - sum and count blocks in a file
+sed - stream editor
+seq - print sequences of numbers
+sleep - suspend execution for an interval
+sort - sort and/or merge files
+split - split a file into pieces
+strings - extract printable strings
+tail - deliver the last part of a file
+tee - pipe fitting
+test - set status according to condition
+touch - set modification date of a file
+tr - translate characters
+troff - text formatting and typesetting
+unicode - interpret Unicode characters
+uniq - report repeated liens in a file
+unutf
