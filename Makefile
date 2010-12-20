@@ -6,7 +6,8 @@ SUBDIRS =	cal\
 	cat\
 	echo\
 	mkdir\
-	pbd
+	pbd\
+	sleep
 
 all:
 	@for i in ${SUBDIRS}; do cd $$i; ${MAKE} || exit; cd ..; done;
