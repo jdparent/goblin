@@ -1,5 +1,7 @@
 # Customize to fit your system
 
+VERSION			= 0.0.1
+
 # paths 
 PREFIX			= /usr/local/goblin
 MANPREFIX		= ${PREFIX}/share/man
