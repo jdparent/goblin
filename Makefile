@@ -2,7 +2,8 @@
 
 include config.mk
 
-SUBDIRS =	cal\
+SUBDIRS =	basename\
+	cal\
 	cat\
 	echo\
 	mkdir\
