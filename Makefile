@@ -6,6 +6,7 @@ SUBDIRS =	basename\
 	cal\
 	cat\
 	echo\
+	md5sum\
 	mkdir\
 	pbd\
 	sleep
