@@ -9,6 +9,7 @@ SUBDIRS =	basename\
 	md5sum\
 	mkdir\
 	pbd\
+	sha1sum\
 	sleep
 
 all:
