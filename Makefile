@@ -10,7 +10,8 @@ SUBDIRS =	basename\
 	mkdir\
 	pbd\
 	sha1sum\
-	sleep
+	sleep\
+	tee
 
 all:
 	@for i in ${SUBDIRS}; do cd $$i; ${MAKE} || exit; cd ..; done;

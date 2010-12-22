@@ -1,0 +1,26 @@
+.TH TEE 1
+.SH NAME
+tee \- pipe fitting
+.SH SYNOPSIS
+.B tee
+[
+.B -i
+]
+[
+.B -a
+]
+[
+.B files ...
+]
+.SH DESCRIPTION
+Tee transcribes the standard input to the standard output and makes
+copies in the files. The options are
+.TP
+.B -i
+Ignore interrupts.
+.TP
+.B -a
+Append the output to the
+.I files
+rather than rewriting them.
+
