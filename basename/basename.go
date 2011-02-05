@@ -12,7 +12,7 @@ var dirMode = flag.Bool("d", false, "Print directory component")
 func usage() {
 	fmt.Fprintf(
 		os.Stderr,
-		"usage: basenem [-d] string [suffix]\n")
+		"usage: basename [-d] string [suffix]\n")
 	os.Exit(1)
 }
 
