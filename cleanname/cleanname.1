@@ -1,0 +1,25 @@
+.TH CLEANNAME 1 
+.SH NAME
+cleanname \- clean a path name
+.SH SYNOPSIS
+.B basename
+[
+.B -d pwd
+]
+.I names ...
+.SH DESCRIPTION
+.PP
+For each file name argument, 
+.I cleanname, 
+by lexical processing only, prints the shortest equivalent string that names
+the same (possible hypothetical) file. It eliminates multiple and
+trainling slashes, and it lexically interprets 
+.B .
+and
+.B ..
+directory components in the name.  If the
+.B -d 
+option in present, unrooted names are prefixed with 
+.I pwd/
+before processing.
+

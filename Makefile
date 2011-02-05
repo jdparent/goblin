@@ -5,6 +5,7 @@ include config.mk
 SUBDIRS =	basename\
 	cal\
 	cat\
+	cleanname\
 	echo\
 	md5sum\
 	mkdir\
