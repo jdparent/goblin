@@ -12,7 +12,8 @@ SUBDIRS =	basename\
 	pbd\
 	sha1sum\
 	sleep\
-	tee
+	tee\
+	touch
 
 all:
 	@for i in ${SUBDIRS}; do cd $$i; ${MAKE} || exit; cd ..; done;
