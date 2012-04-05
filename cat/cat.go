@@ -11,30 +11,24 @@ import (
 	"os"
 )
 
+const NBUF = 8192
+
 func cat(f *os.File) {
-	const NBUF = 8192
-	var buf [NBUF]byte
+	var b[NBUF]byte
 
 	for {
-		switch nr, rerr := f.Read(buf[:]); true {
+		nr, rerr := f.Read(b[:])
+		switch {
 		case nr > 0:
-			var nw, werr = os.Stdout.Write(buf[0:nr])
+			nw, werr := os.Stdout.Write(b[0:nr])
 			if nw != nr {
-				fmt.Fprintf(
-					os.Stderr,
-					"cat: write error copying %s: %s",
-					f.Name(),
-					werr.String())
+				fmt.Fprintf(os.Stderr, "cat: write error copying %s: %s", f.Name(), werr.Error())
 				os.Exit(1)
 			}
 		case nr == 0:
 			return
 		case nr < 0:
-			fmt.Fprintf(
-				os.Stderr,
-				"cat: error reading %s: %s",
-				f.Name(),
-				rerr.String())
+			fmt.Fprintf(os.Stderr, "cat: error reading %s: %s", f.Name(), rerr.Error())
 			os.Exit(1)
 		}
 	}
@@ -42,21 +36,17 @@ func cat(f *os.File) {
 
 func main() {
 	flag.Parse()
-	if flag.NArg() > 0 {
-		for i := 0; i < flag.NArg(); i++ {
-			var f, err = os.Open(flag.Arg(i))
+	if flag.NArg() == 0 {
+		cat(os.Stdin)		
+	} else {
+		for _, v := range flag.Args() {
+			f, err := os.Open(v)
 			if f == nil {
-				fmt.Fprintf(
-					os.Stderr,
-					"cat: can't open %s: %s",
-					flag.Arg(i),
-					err.String())
+				fmt.Fprintf(os.Stderr, "cat: can't open %s: %s", v, err.Error())
 				os.Exit(1)
 			}
 			cat(f)
 			f.Close()
 		}
-	} else {
-		cat(os.Stdin)
 	}
 }
