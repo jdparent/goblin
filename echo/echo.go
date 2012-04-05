@@ -19,11 +19,11 @@ const (
 func main() {
 	flag.Parse()
 	var s string = ""
-	for i := 0; i < flag.NArg(); i++ {
+	for i, v := range flag.Args() {
 		if i > 0 {
 			s += Space
 		}
-		s += flag.Arg(i)
+		s += v
 	}
 	if !*suppressNewline {
 		s += Newline
