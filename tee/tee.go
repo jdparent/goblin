@@ -1,12 +1,11 @@
 package main
 
 import (
-	"os"
-	"fmt"
-	"flag"
 	"container/vector"
+	"flag"
+	"fmt"
+	"os"
 )
-
 
 var ignoreInterrupts = flag.Bool("i", false, "Ignore interrupts")
 var appendOutput = flag.Bool("a", false, "Append the output to the files rather than rewriting them")
@@ -25,7 +24,7 @@ func main() {
 
 	for i := 0; i < flag.NArg(); i++ {
 		if *appendOutput {
-			f, e := os.Open(flag.Arg(i), os.O_CREAT | os.O_WRONLY | os.O_APPEND, 0666)
+			f, e := os.OpenFile(flag.Arg(i), os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
 
 			if e != nil {
 				fmt.Fprintf(
@@ -38,7 +37,7 @@ func main() {
 
 			vec.Push(f)
 		} else {
-			f, e := os.Open(flag.Arg(i), os.O_CREAT | os.O_WRONLY, 0666)
+			f, e := os.Create(flag.Arg(i))
 
 			if e != nil {
 				fmt.Fprintf(
@@ -59,29 +58,29 @@ func main() {
 
 	for {
 		switch nr, _ := f.Read(buf[:]); true {
-			case nr > 0:
-				for x := 0; x < len(vec); x++ {
-					el := vec.At(x).(*os.File)
-					_, e := el.Write(buf[0:nr])
+		case nr > 0:
+			for x := 0; x < len(vec); x++ {
+				el := vec.At(x).(*os.File)
+				_, e := el.Write(buf[0:nr])
 
-					if e != nil {
-						fmt.Fprintf(
-							os.Stderr,
-							"tee: error writting to file %s: %s\n",
-							el.Name(),
-							e.String())
-						os.Exit(1)
-					}
+				if e != nil {
+					fmt.Fprintf(
+						os.Stderr,
+						"tee: error writting to file %s: %s\n",
+						el.Name(),
+						e.String())
+					os.Exit(1)
 				}
-			case nr == 0:
-				for x := 0; x < len(vec); x++ {
-					el := vec.At(x).(*os.File)
-					el.Close()
-				}
-				return
-			case nr < 0:
-				fmt.Fprintf(os.Stderr, "tee: error reading from stdin\n")
-				os.Exit(1)	
+			}
+		case nr == 0:
+			for x := 0; x < len(vec); x++ {
+				el := vec.At(x).(*os.File)
+				el.Close()
+			}
+			return
+		case nr < 0:
+			fmt.Fprintf(os.Stderr, "tee: error reading from stdin\n")
+			os.Exit(1)
 		}
 	}
 }

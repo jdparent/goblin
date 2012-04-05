@@ -1,40 +1,39 @@
 package main
 
 import (
-	"os"
-	"fmt"
-	"time"
 	"flag"
+	"fmt"
+	"os"
 	"strconv"
+	"time"
 )
-
 
 func parseMonth(month string) int {
 	switch month {
-		case "jan", "january":
-			return 1
-		case "feb", "february":
-			return 2
-		case "mar", "march":
-			return 3
-		case "apr", "april":
-			return 4
-		case "may":
-			return 5
-		case "jun", "june":
-			return 6
-		case "jul", "july":
-			return 7
-		case "aug", "august":
-			return 8
-		case "sep", "september":
-			return 9
-		case "oct", "october":
-			return 10
-		case "nov", "november":
-			return 11
-		case "dec", "december":
-			return 12
+	case "jan", "january":
+		return 1
+	case "feb", "february":
+		return 2
+	case "mar", "march":
+		return 3
+	case "apr", "april":
+		return 4
+	case "may":
+		return 5
+	case "jun", "june":
+		return 6
+	case "jul", "july":
+		return 7
+	case "aug", "august":
+		return 8
+	case "sep", "september":
+		return 9
+	case "oct", "october":
+		return 10
+	case "nov", "november":
+		return 11
+	case "dec", "december":
+		return 12
 	}
 	return 0
 }
@@ -51,7 +50,7 @@ func parseYear(year string) int64 {
 }
 
 func januaryFirst(year int64) int {
-	d := 4 + year + (year + 3) / 4
+	d := 4 + year + (year+3)/4
 
 	if year > 1800 {
 		d -= (year - 1701) / 100
@@ -80,7 +79,7 @@ func printCal(month int, year int64) {
 
 	smon := [...]string{"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"}
 
-	var s string = smon[month-1] + " " + strconv.Itoa64(year)
+	var s string = smon[month-1] + " " + strconv.FormatInt(year, 10)
 
 	var off int = (20 - len(s)) / 2
 
@@ -98,18 +97,18 @@ func printCal(month int, year int64) {
 		day += mth[i-1]
 	}
 
-	for i := 0; i < day % 7; i++ {
+	for i := 0; i < day%7; i++ {
 		s = s + "   "
 	}
 
 	for i := 1; i <= mth[month-1]; i++ {
-		s = s + " " 
+		s = s + " "
 		if i < 10 {
 			s = s + " "
 		}
 		s = s + strconv.Itoa(i)
 		day += 1
-		if day % 7 == 0 {
+		if day%7 == 0 {
 			s = s + "\n"
 		}
 	}
@@ -122,7 +121,7 @@ func printCal(month int, year int64) {
 func main() {
 	flag.Parse()
 
-	var local = *time.LocalTime()
+	var local = *time.Now()
 
 	var month int = 0
 	var year int64 = 0

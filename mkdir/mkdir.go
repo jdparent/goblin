@@ -1,9 +1,9 @@
 package main
 
 import (
-	"os"
-	"fmt"
 	"flag"
+	"fmt"
+	"os"
 	"strconv"
 )
 
@@ -23,7 +23,7 @@ func parseMode(perm string) uint32 {
 		perm = "0" + perm
 	}
 
-	newMode, cerr := strconv.Btoui64(perm, 8)
+	newMode, cerr := strconv.ParseUint(perm, 8, 64)
 
 	if cerr != nil {
 		fmt.Fprintf(

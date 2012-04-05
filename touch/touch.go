@@ -2,15 +2,15 @@
 package main
 
 import (
-	"os"
 	"flag"
 	"fmt"
+	"os"
 	"syscall"
 	"time"
 )
 
 var create = flag.Bool("c", false, "Don't create if not exists")
-var newTime = flag.Int("t", int(time.Seconds()), "Set to time provided")
+var newTime = flag.Int("t", int(time.Now()), "Set to time provided")
 
 func usage() {
 	fmt.Fprintf(
@@ -20,7 +20,7 @@ func usage() {
 }
 
 func main() {
-	flag.Parse();
+	flag.Parse()
 
 	if flag.NArg() < 1 {
 		usage()
@@ -41,7 +41,7 @@ func main() {
 			os.Exit(1)
 		}
 
-		f, err := os.Open(name, os.O_CREAT, 0666)
+		f, err := os.Create(name)
 		if err != nil {
 			fmt.Fprintf(
 				os.Stderr,
@@ -53,11 +53,11 @@ func main() {
 		f.Close()
 
 		e = syscall.Utime(name, &tb)
-		if e != 0{
+		if e != 0 {
 			fmt.Fprintf(
-			os.Stderr,
-			"touch: cannot touch `%s'\n",
-			name)
+				os.Stderr,
+				"touch: cannot touch `%s'\n",
+				name)
 			os.Exit(1)
 		}
 	}

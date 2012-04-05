@@ -6,9 +6,9 @@
 package main
 
 import (
-	"os"
 	"flag"
 	"fmt"
+	"os"
 )
 
 func cat(f *os.File) {
@@ -44,7 +44,7 @@ func main() {
 	flag.Parse()
 	if flag.NArg() > 0 {
 		for i := 0; i < flag.NArg(); i++ {
-			var f, err = os.Open(flag.Arg(i), os.O_RDONLY, 0666)
+			var f, err = os.Open(flag.Arg(i))
 			if f == nil {
 				fmt.Fprintf(
 					os.Stderr,

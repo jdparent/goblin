@@ -1,12 +1,12 @@
 package main
 
 import (
-	"os"
-	"time"
 	"flag"
 	"fmt"
-	"strconv"
 	"math"
+	"os"
+	"strconv"
+	"time"
 )
 
 func main() {
@@ -17,7 +17,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	secs, err := strconv.Atof64(flag.Arg(0))
+	secs, err := strconv.ParseFloat(flag.Arg(0), 64)
 
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "sleep: Unknown Argument\n")
