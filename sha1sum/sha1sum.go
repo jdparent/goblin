@@ -15,69 +15,36 @@ func usage() {
 
 func main() {
 	flag.Parse()
-
-	if flag.NArg() == 0 { // Stdin
-		f := os.Stdin
-		h := sha1.New()
-		var buf [64]byte
-
+	var buf [64]byte
+	h := sha1.New()
+	
+	if flag.NArg() == 0 {
 		for {
-			switch nr, _ := f.Read(buf[:]); true {
+			nr, rerr := os.Stdin.Read(buf[:])
+			switch {
 			case nr > 0:
-				_, e := h.Write(buf[0:nr])
-
-				if e != nil {
-					fmt.Fprintf(os.Stderr, "sha1sum: error generating hash\n")
-					os.Exit(1)
-				}
+				// h.Write never returns an error.
+				h.Write(buf[0:nr])
 			case nr == 0:
-				s := h.Sum(nil)
-
-				for j := 0; j < len(s); j++ {
-					if s[j] < 0x10 {
-						fmt.Fprintf(os.Stdout, "0%0x", s[j])
-					} else {
-						fmt.Fprintf(os.Stdout, "%0x", s[j])
-					}
-				}
-				fmt.Fprintf(os.Stdout, "  -\n")
-				return
+				fmt.Printf("%x\n", h.Sum(nil))
+				os.Exit(0)
 			case nr < 0:
-				fmt.Fprintf(os.Stderr, "sha1sum: error generating hash\n")
+				fmt.Fprintf(os.Stderr, "sha1sum: error reading from os.Stdin: %s\n", rerr)
 				os.Exit(1)
 			}
 		}
 	} else {
-		h := sha1.New()
-
-		for i := 0; i < flag.NArg(); i++ {
-			d, e := ioutil.ReadFile(flag.Arg(i))
-
-			if e != nil {
-				fmt.Fprintf(os.Stderr, "sha1sum: cant read file %s\n", flag.Arg(i))
+		for _, v := range flag.Args() {
+			data, err := ioutil.ReadFile(v)
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "sha1sum: error reading file %s: %s\n", v, err)
 				os.Exit(1)
 			}
 
-			_, e = h.Write(d)
-
-			if e != nil {
-				fmt.Fprintf(os.Stderr, "sha1sum: error generating hash\n")
-				os.Exit(1)
-			}
-
-			s := h.Sum(nil)
-
-			for j := 0; j < len(s); j++ {
-				if s[j] < 0x10 {
-					fmt.Fprintf(os.Stdout, "0%0x", s[j])
-				} else {
-					fmt.Fprintf(os.Stdout, "%0x", s[j])
-				}
-			}
-
-			fmt.Fprintf(os.Stdout, "  %s\n", flag.Arg(i))
-
-			h.Reset() // Reset has for next file
+			// h.Write never returns an error.
+			h.Write(data)
+			fmt.Printf("%x %s\n", h.Sum(nil), v)
+			h.Reset()
 		}
 	}
 }
