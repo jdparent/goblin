@@ -1,16 +1,16 @@
 package main
 
 import (
-	"os"
 	"fmt"
+	"os"
 )
 
 func main() {
-	var p, e = os.Getwd()
 
-	if e != nil {
-		fmt.Fprintf(os.Stderr, "pdb: can't find working directory: %s", e.String())
+	if p, err := os.Getwd(); err != nil {
+		fmt.Fprintln(os.Stderr, "pdb: can't find working directory:", err.Error())
 		os.Exit(1)
+	} else {
+		fmt.Print(p)
 	}
-	fmt.Fprintf(os.Stdout, p)
 }
