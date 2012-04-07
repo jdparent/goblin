@@ -1,85 +1,66 @@
+// tee - pipe fitting
+
 package main
 
 import (
-	"container/vector"
 	"flag"
 	"fmt"
 	"os"
 )
 
-var ignoreInterrupts = flag.Bool("i", false, "Ignore interrupts")
-var appendOutput = flag.Bool("a", false, "Append the output to the files rather than rewriting them")
+var (
+	iflag = flag.Bool("i", false, "Ignore interrupts")
+	aflag = flag.Bool("a", false, "Append the output to the files rather than rewriting them")
+)
 
 func main() {
 	flag.Parse()
 
-	var vec vector.Vector
+	files := make([]*os.File, 0, flag.NArg() + 1)
 
-	vec.Push(os.Stdout)
+	files = append(files, os.Stdout)
 
-	if *ignoreInterrupts {
+	if *iflag {
 		fmt.Fprintf(os.Stdout, "tee: -i flag not supported\n")
 		os.Exit(1)
 	}
 
-	for i := 0; i < flag.NArg(); i++ {
-		if *appendOutput {
-			f, e := os.OpenFile(flag.Arg(i), os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
-
-			if e != nil {
-				fmt.Fprintf(
-					os.Stderr,
-					"tee: unable to open file %s: %s\n",
-					flag.Arg(i),
-					e.String())
-				os.Exit(1)
-			}
-
-			vec.Push(f)
+	for _, v := range flag.Args() {
+		var f *os.File
+		var e error
+		
+		if *aflag {
+			f, e = os.OpenFile(v, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
 		} else {
-			f, e := os.Create(flag.Arg(i))
-
-			if e != nil {
-				fmt.Fprintf(
-					os.Stderr,
-					"tee: unable to open file %s: %s\n",
-					flag.Arg(i),
-					e.String())
-				os.Exit(1)
-			}
-
-			vec.Push(f)
+			f, e = os.Create(v)
 		}
+		defer f.Close()
+
+		if e != nil {
+			fmt.Fprintf(os.Stderr, "tee: unable to open file %s: %s\n", v, e.Error())
+			os.Exit(1)
+		}
+		files = append(files, f)
 	}
 
-	// Copied from cat.go
 	var buf [64]byte
 	f := os.Stdin
 
 	for {
-		switch nr, _ := f.Read(buf[:]); true {
+		switch nr, rerr := f.Read(buf[:]); true {
 		case nr > 0:
-			for x := 0; x < len(vec); x++ {
-				el := vec.At(x).(*os.File)
-				_, e := el.Write(buf[0:nr])
+			for _, f := range files {
+				_, err := f.Write(buf[0:nr])
 
-				if e != nil {
-					fmt.Fprintf(
-						os.Stderr,
-						"tee: error writting to file %s: %s\n",
-						el.Name(),
-						e.String())
+				if err != nil {
+					fmt.Fprintf(os.Stderr, "tee: error writting to file %s: %s\n", f.Name(), err.Error())
 					os.Exit(1)
 				}
 			}
 		case nr == 0:
-			for x := 0; x < len(vec); x++ {
-				el := vec.At(x).(*os.File)
-				el.Close()
-			}
-			return
+			os.Exit(0)
 		case nr < 0:
-			fmt.Fprintf(os.Stderr, "tee: error reading from stdin\n")
+			fmt.Fprintln(os.Stderr, "tee: error reading from stdin:", rerr)
 			os.Exit(1)
 		}
 	}
