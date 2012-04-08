@@ -14,9 +14,7 @@ var (
 )
 
 func usage() {
-	fmt.Fprintf(
-		os.Stderr,
-		"usage: touch [-c] [-t time] names...\n")
+	fmt.Fprintf(os.Stderr, "usage: touch [-c] [-t time] names...\n")
 	os.Exit(1)
 }
 
@@ -34,14 +32,14 @@ func main() {
 		}
 	} else {
 		if *aflag {
-			atime = time.Unix(tflag, 0)
+			atime = time.Unix(int64(*tflag), 0)
 		} else {
-			mtime = time.Unix(tflag, 0)
+			mtime = time.Unix(int64(*tflag), 0)
 		}
 	}
 	for _, name := range flag.Args() {
 		if err := os.Chtimes(name, atime, mtime); err != nil {
-			fmt.Fprintln(os.Stderr, "touch: cannon touch %s: %s", name, err.Error())
+			fmt.Fprintln(os.Stderr, "touch: cannot touch %s: %s", name, err.Error())
 		}
 	}
 }
