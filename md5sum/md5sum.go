@@ -9,7 +9,7 @@ import (
 )
 
 func usage() {
-	fmt.Fprintf(os.Stderr, "usage: md5sum [file ...]\n")
+	fmt.Fprintln(os.Stderr, "usage: md5sum [file ...]")
 	os.Exit(1)
 }
 

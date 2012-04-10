@@ -8,48 +8,48 @@ import (
 	"time"
 )
 
-func parseMonth(month string) int {
+func parseMonth(month string) time.Month {
 	switch month {
 	case "jan", "january":
-		return 1
+		return time.January
 	case "feb", "february":
-		return 2
+		return time.February
 	case "mar", "march":
-		return 3
+		return time.March
 	case "apr", "april":
-		return 4
+		return time.April
 	case "may":
-		return 5
+		return time.May
 	case "jun", "june":
-		return 6
+		return time.June
 	case "jul", "july":
-		return 7
+		return time.July
 	case "aug", "august":
-		return 8
+		return time.August
 	case "sep", "september":
-		return 9
+		return time.September
 	case "oct", "october":
-		return 10
+		return time.October
 	case "nov", "november":
-		return 11
+		return time.November
 	case "dec", "december":
-		return 12
+		return time.December
 	}
-	return 0
+	return time.Month(0)
 }
 
-func parseYear(year string) int64 {
-	var yr, er = strconv.Atoi(year)
+func parseYear(year string) int {
+	var yr, err = strconv.ParseInt(year, 10, 32)
 
-	if er != nil {
-		fmt.Fprintf(os.Stderr, "cal: error parsing parameters\n")
+	if err != nil {
+		fmt.Fprintln(os.Stderr, "cal: error parsing year:", err.Error())
 		os.Exit(1)
 	}
 
-	return int64(yr)
+	return int(yr)
 }
 
-func januaryFirst(year int64) int {
+func januaryFirst(year int) int {
 	d := 4 + year + (year+3)/4
 
 	if year > 1800 {
@@ -64,36 +64,36 @@ func januaryFirst(year int64) int {
 	return int(d % 7)
 }
 
-var nonleapyear = []int{31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}
-var leapyear = []int{31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}
+var (
+	nonleapyear = []int{31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}
+	leapyear = []int{31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}
+)
 
-func months(year int64) []int {
+func months(year int) []int {
 	if year%4 == 0 && (year%100 != 0 || year%400 == 0) {
 		return leapyear
 	}
 	return nonleapyear
 }
 
-func printCal(month int, year int64) {
-	var dayw string = " Su Mo Tu We Th Fr Sa"
+func printCal(month time.Month, year int) {
+	dayw := "Su Mo Tu We Th Fr Sa"
 
-	smon := [...]string{"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"}
+	s := month.String() + " " + strconv.FormatInt(int64(year), 10)
 
-	var s string = smon[month-1] + " " + strconv.FormatInt(year, 10)
-
-	var off int = (20 - len(s)) / 2
+	off := (20 - len(s)) / 2
 
 	for i := 0; i < off; i++ {
 		s = " " + s
 	}
 
-	s = s + "\n" + dayw + "\n"
+	s += "\n" + dayw + "\n"
 
 	mth := months(year)
 
 	day := januaryFirst(year)
 
-	for i := 1; i < month; i++ {
+	for i := 1; i < int(month); i++ {
 		day += mth[i-1]
 	}
 
@@ -121,10 +121,10 @@ func printCal(month int, year int64) {
 func main() {
 	flag.Parse()
 
-	var local = *time.Now()
+	local := time.Now()
 
-	var month int = 0
-	var year int64 = 0
+	var month time.Month
+	var year int
 
 	if flag.NArg() > 2 {
 		fmt.Fprintf(os.Stderr, "cal: error parsing parameters\n")
@@ -141,16 +141,16 @@ func main() {
 		}
 	} else {
 		if flag.NArg() == 1 {
-			year = local.Year
+			year = local.Year()
 			month = parseMonth(flag.Arg(0))
 
-			if month == 0 {
+			if month == time.Month(0) {
 				year = parseYear(flag.Arg(0))
-				month = local.Month
+				month = local.Month()
 			}
 		} else {
-			year = local.Year
-			month = local.Month
+			year = local.Year()
+			month = local.Month()
 		}
 	}
 

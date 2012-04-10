@@ -33,7 +33,7 @@ func main() {
 	if flag.NArg() == 0 || flag.NArg() > 2 {
 		usage()
 	}
-	if *dirMode {
+	if *dflag {
 		printDir(flag.Arg(0))
 	} else {
 		if flag.NArg() == 2 {

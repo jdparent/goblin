@@ -8,36 +8,27 @@ import (
 	"os"
 )
 
-var (
-	iflag = flag.Bool("i", false, "Ignore interrupts")
-	aflag = flag.Bool("a", false, "Append the output to the files rather than rewriting them")
-)
+var aflag = flag.Bool("a", false, "Append the output to the files rather than rewriting them")
 
 func main() {
 	flag.Parse()
 
 	files := make([]*os.File, 0, flag.NArg() + 1)
-
 	files = append(files, os.Stdout)
-
-	if *iflag {
-		fmt.Fprintf(os.Stdout, "tee: -i flag not supported\n")
-		os.Exit(1)
-	}
 
 	for _, v := range flag.Args() {
 		var f *os.File
-		var e error
+		var err error
 		
 		if *aflag {
-			f, e = os.OpenFile(v, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+			f, err = os.OpenFile(v, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
 		} else {
-			f, e = os.Create(v)
+			f, err = os.Create(v)
 		}
 		defer f.Close()
 
-		if e != nil {
-			fmt.Fprintf(os.Stderr, "tee: unable to open file %s: %s\n", v, e.Error())
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "tee: unable to open file %s: %s\n", v, err.Error())
 			os.Exit(1)
 		}
 		files = append(files, f)
