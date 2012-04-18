@@ -28,7 +28,7 @@ func main() {
 	case 1:
 		i, err := strconv.ParseInt(flag.Arg(0), 10, 64)
 		if err != nil {
-			fmt.Fprintln(os.Stderr, "date: error parsing time:", err.Error())
+			fmt.Fprintln(os.Stderr, "date:", err.Error())
 			os.Exit(1)
 		}
 		t = time.Unix(i, 0)
