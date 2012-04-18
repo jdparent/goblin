@@ -29,7 +29,7 @@ func main() {
 				fmt.Printf("%x\n", h.Sum(nil))
 				os.Exit(0)
 			case nr < 0:
-				fmt.Fprintf(os.Stderr, "md5sum: error reading from os.Stdin: %s\n", rerr)
+				fmt.Fprintln(os.Stderr, "md5sum:", rerr)
 				os.Exit(1)
 			}
 		}
@@ -37,7 +37,7 @@ func main() {
 		for _, v := range flag.Args() {
 			data, err := ioutil.ReadFile(v)
 			if err != nil {
-				fmt.Fprintf(os.Stderr, "md5sum: error reading file %s: %s\n", v, err)
+				fmt.Fprintln(os.Stderr, "md5sum:", err)
 				os.Exit(1)
 			}
 
