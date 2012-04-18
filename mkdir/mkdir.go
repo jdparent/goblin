@@ -8,8 +8,8 @@ import (
 )
 
 var (
-	pflag = flag.Bool("p", false, "Create parent directories")
-	mflag = flag.String("m", "777", "Mode")
+	pflag = flag.Bool("p", false, "Create any necessary parent directories and do not complain if the target directory already exists.")
+	mflag = flag.String("m", "777", "Sets the permissions to be used when creating the directory.")
 )
 
 func usage() {
@@ -33,17 +33,17 @@ func main() {
 	}
 	mode, err := parseMode(*mflag)
 	if err != nil {
-		fmt.Fprintln(os.Stderr, "mkdir:  error parsing mode:", err.Error())
+		fmt.Fprintln(os.Stderr, "mkdir:", err.Error())
 	}
 	
 	for _, name := range flag.Args() {
 		if *pflag {
 			if err := os.MkdirAll(name, mode); err != nil {
-				fmt.Fprintf(os.Stderr, "mkdir: %s\n", err.Error())
+				fmt.Fprintln(os.Stderr, "mkdir:", err.Error())
 			}
 		} else {
 			if err := os.Mkdir(name, mode); err != nil {
-				fmt.Fprintf(os.Stderr, "mkdir: %s\n", err.Error())
+				fmt.Fprintln(os.Stderr, "mkdir:", err.Error())
 			}
 		}
 	}
