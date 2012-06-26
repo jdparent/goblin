@@ -6,57 +6,26 @@
 package main
 
 import (
-	"os"
 	"flag"
 	"fmt"
+	"os"
 )
 
-func cat(f *os.File) {
-	const NBUF = 8192
-	var buf [NBUF]byte
-
-	for {
-		switch nr, rerr := f.Read(buf[:]); true {
-		case nr > 0:
-			var nw, werr = os.Stdout.Write(buf[0:nr])
-			if nw != nr {
-				fmt.Fprintf(
-					os.Stderr,
-					"cat: write error copying %s: %s",
-					f.Name(),
-					werr.String())
-				os.Exit(1)
-			}
-		case nr == 0:
-			return
-		case nr < 0:
-			fmt.Fprintf(
-				os.Stderr,
-				"cat: error reading %s: %s",
-				f.Name(),
-				rerr.String())
-			os.Exit(1)
-		}
-	}
-}
+const NBUF = 8192
 
 func main() {
 	flag.Parse()
-	if flag.NArg() > 0 {
-		for i := 0; i < flag.NArg(); i++ {
-			var f, err = os.Open(flag.Arg(i), os.O_RDONLY, 0666)
-			if f == nil {
-				fmt.Fprintf(
-					os.Stderr,
-					"cat: can't open %s: %s",
-					flag.Arg(i),
-					err.String())
+	if flag.NArg() == 0 {
+		io.copy(os.Stdin, os.Stdout)		
+	} else {
+		for _, v := range flag.Args() {
+			f, err := os.Open(v)
+			if err != nil {
+				fmt.Fprintln(os.Stderr, "cat:" err.Error())
 				os.Exit(1)
 			}
-			cat(f)
+			io.copy(f, os.Stdout)
 			f.Close()
 		}
-	} else {
-		cat(os.Stdin)
 	}
 }

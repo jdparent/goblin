@@ -5,62 +5,41 @@ import (
 	"os"
 	"flag"
 	"fmt"
-	"syscall"
 	"time"
 )
 
-var create = flag.Bool("c", false, "Don't create if not exists")
-var newTime = flag.Int("t", int(time.Seconds()), "Set to time provided")
+var (
+	aflag = flag.Bool("a", false, "Change access time instead of modification time")
+	tflag = flag.Int("t", 0, "Set to time provided")
+)
 
 func usage() {
-	fmt.Fprintf(
-		os.Stderr,
-		"usage: touch [-c] [-t time] names...\n")
+	fmt.Fprintf(os.Stderr, "usage: touch [-c] [-t time] names...\n")
 	os.Exit(1)
 }
 
 func main() {
 	flag.Parse();
-
 	if flag.NArg() < 1 {
 		usage()
 	}
-
-	for i := 0; i < flag.NArg(); i++ {
-		var name = flag.Arg(i)
-		var tb syscall.Utimbuf
-		tb.Actime = (int32)(*newTime)
-		tb.Modtime = (int32)(*newTime)
-		var e = syscall.Utime(name, &tb)
-
-		if (e != 0) && *create {
-			fmt.Fprintf(
-				os.Stderr,
-				"touch: cannot touch `%s'\n",
-				name)
-			os.Exit(1)
+	var atime, mtime time.Time
+	if *tflag == 0 {
+		if *aflag {
+			atime = time.Now()
+		} else {
+			mtime = time.Now()
 		}
-
-		f, err := os.Open(name, os.O_CREAT, 0666)
-		if err != nil {
-			fmt.Fprintf(
-				os.Stderr,
-				"touch: cannot touch `%s': %s\n",
-				name,
-				err.String())
-			os.Exit(1)
-		}
-		f.Close()
-
-		e = syscall.Utime(name, &tb)
-		if e != 0{
-			fmt.Fprintf(
-			os.Stderr,
-			"touch: cannot touch `%s'\n",
-			name)
-			os.Exit(1)
+	} else {
+		if *aflag {
+			atime = time.Unix(int64(*tflag), 0)
+		} else {
+			mtime = time.Unix(int64(*tflag), 0)
 		}
 	}
-
-	os.Exit(0)
+	for _, name := range flag.Args() {
+		if err := os.Chtimes(name, atime, mtime); err != nil {
+			fmt.Fprintln(os.Stderr, "touch: cannot touch %s: %s", name, err.Error())
+		}
+	}
 }
